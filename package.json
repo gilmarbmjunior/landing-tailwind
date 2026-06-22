@@ -1,6 +1,6 @@
 {
     "name": "vite-react-ts-tailwind-starter",
-    "description": "Landing page do Projeto Inclus com React e Tailwind",
+    "description": "",
     "version": "2.6.0613",
     "author": "Gilmar Bezerra de Menezes Júnior",
     "license": "UNLICENSED",
@@ -23,6 +23,7 @@
         "clsx": "^2.1.1",
         "react": "^19.2.6",
         "react-dom": "^19.2.6",
+        "react-router-dom": "^7.18.0",
         "tailwind-merge": "^3.6.0",
         "tailwindcss": "^4.3.1"
     },

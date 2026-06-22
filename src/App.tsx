@@ -1,19 +1,8 @@
-import { cn } from './util/cn'
+import { RouterProvider } from 'react-router-dom';
+import mainRoutes from './routes/main.routes';
 
 function App() {
-    return (
-        <div
-            className={cn(
-                'flex',
-                'h-screen',
-                'items-center',
-                'justify-center',
-                'w-screen',
-            )}
-        >
-            Hello World
-        </div>
-    )
+    return <RouterProvider router={mainRoutes} />;
 }
 
-export default App
+export default App;

@@ -1,9 +1,9 @@
-import js from '@eslint/js'
-import tsParser from '@typescript-eslint/parser'
-import prettier from 'eslint-config-prettier'
-import reactHooks from 'eslint-plugin-react-hooks'
-import reactRefresh from 'eslint-plugin-react-refresh'
-import globals from 'globals'
+import js from '@eslint/js';
+import tsParser from '@typescript-eslint/parser';
+import prettier from 'eslint-config-prettier';
+import reactHooks from 'eslint-plugin-react-hooks';
+import reactRefresh from 'eslint-plugin-react-refresh';
+import globals from 'globals';
 
 const localRules = {
     rules: {
@@ -18,7 +18,7 @@ const localRules = {
                 schema: [],
             },
             create(context) {
-                const sourceCode = context.sourceCode
+                const sourceCode = context.sourceCode;
 
                 return {
                     CallExpression(node) {
@@ -26,42 +26,50 @@ const localRules = {
                             node.callee.type !== 'Identifier' ||
                             node.callee.name !== 'cn'
                         ) {
-                            return
+                            return;
                         }
 
                         if (node.arguments.length < 2) {
-                            return
+                            return;
                         }
 
                         const stringArguments = node.arguments.filter(
                             (argument) =>
-                                argument.type === 'Literal' &&
-                                typeof argument.value === 'string',
-                        )
+                                (argument.type === 'Literal' &&
+                                    typeof argument.value === 'string') ||
+                                argument.type === 'TemplateLiteral',
+                        );
 
                         if (stringArguments.length !== node.arguments.length) {
-                            return
+                            return;
                         }
 
                         const currentArguments = stringArguments.map(
-                            (argument) => ({
-                                text: sourceCode.getText(argument),
-                                value: argument.value,
-                            }),
-                        )
+                            (argument) => {
+                                const text = sourceCode.getText(argument);
+                                const cleanValue = text.replace(
+                                    /^['"`]|['"`]$/g,
+                                    '',
+                                );
+                                return {
+                                    text,
+                                    value: cleanValue,
+                                };
+                            },
+                        );
 
                         const sortedArguments = [...currentArguments].sort(
                             (left, right) =>
                                 left.value.localeCompare(right.value),
-                        )
+                        );
 
                         const isSorted = currentArguments.every(
                             (argument, index) =>
                                 argument.value === sortedArguments[index].value,
-                        )
+                        );
 
                         if (isSorted) {
-                            return
+                            return;
                         }
 
                         context.report({
@@ -74,11 +82,11 @@ const localRules = {
                                         argument,
                                         sortedArguments[index].text,
                                     ),
-                                )
+                                );
                             },
-                        })
+                        });
                     },
-                }
+                };
             },
         },
         'sort-jsx-props': {
@@ -91,12 +99,12 @@ const localRules = {
                 schema: [],
             },
             create(context) {
-                const sourceCode = context.sourceCode
+                const sourceCode = context.sourceCode;
 
                 return {
                     JSXOpeningElement(node) {
                         if (node.attributes.length < 2) {
-                            return
+                            return;
                         }
 
                         if (
@@ -105,7 +113,7 @@ const localRules = {
                                     attribute.type !== 'JSXAttribute',
                             )
                         ) {
-                            return
+                            return;
                         }
 
                         const currentAttributes = node.attributes.map(
@@ -113,20 +121,20 @@ const localRules = {
                                 name: attribute.name.name,
                                 text: sourceCode.getText(attribute),
                             }),
-                        )
+                        );
 
                         const sortedAttributes = [...currentAttributes].sort(
                             (left, right) =>
                                 left.name.localeCompare(right.name),
-                        )
+                        );
 
                         const isSorted = currentAttributes.every(
                             (attribute, index) =>
                                 attribute.name === sortedAttributes[index].name,
-                        )
+                        );
 
                         if (isSorted) {
-                            return
+                            return;
                         }
 
                         context.report({
@@ -138,15 +146,15 @@ const localRules = {
                                         attribute,
                                         sortedAttributes[index].text,
                                     ),
-                                )
+                                );
                             },
-                        })
+                        });
                     },
-                }
+                };
             },
         },
     },
-}
+};
 
 export default [
     {
@@ -199,11 +207,15 @@ export default [
     prettier,
 
     {
-        files: ['vite.config.ts', 'eslint.config.js'],
+        files: [
+            'vite.config.ts',
+            'eslint.config.js',
+            'src/theme/tokens/**/*.ts',
+        ],
         languageOptions: {
             globals: {
                 ...globals.node,
             },
         },
     },
-]
+];
